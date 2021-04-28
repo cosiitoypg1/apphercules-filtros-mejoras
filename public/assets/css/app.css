@@ -4817,17 +4817,28 @@ td.mail-right {
     /* -Caja:*/
     /* +Carteras:*/
     .supervisor-cash-table td:nth-of-type(1):before {
-        content: "Cartera";
+        content: "Ruta";
     }
 
     .supervisor-cash-table td:nth-of-type(2):before {
-        content: "Detalle";
+        content: "Fecha";
     }
 
     .supervisor-cash-table td:nth-of-type(3):before {
         content: "Saldo Base";
     }
+    /* +Carteras:*/
+   .supervisor-cash-tableB td:nth-of-type(1):before {
+    content: "Ruta";
+}
 
+.supervisor-cash-tableB td:nth-of-type(2):before {
+    content: "Fecha";
+}
+
+.supervisor-cash-tableB td:nth-of-type(3):before {
+    content: "Caja";
+}
     /* +Historial Caja:*/
     .supervisor-cashH-table td:nth-of-type(1):before {
         content: "Fecha";

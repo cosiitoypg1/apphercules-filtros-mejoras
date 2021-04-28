@@ -77,6 +77,8 @@
                                                  Clavo
                                                 </button>
                                             </form>
+                                            
+                                            <a href="{{url('summary')}}?id_credit={{$client->id}}" class="btn btn-info btn-xs hidden"><i class="fa fa-history"></i> Pendiente</a>
                                             <a href="{{url('summary')}}?id_credit={{$client->id}}" class="btn btn-info btn-xs hidden"><i class="fa fa-history"></i> Ver</a>
                                             <a href="{{url('route')}}/{{$client->order_list}}/edit?id_credit={{$client->id}}&direction=down" class="btn btn-default btn-xs arw-down btn-center-arrow"><i class="fa fa-arrow-down"></i></a>
                                         </td>

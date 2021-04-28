@@ -7,6 +7,7 @@ use App\db_credit;
 use App\db_summary;
 use App\db_supervisor_has_agent;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class blacklistsController extends Controller
@@ -21,7 +22,8 @@ class blacklistsController extends Controller
         // pending_pay -> credit -> user
         //      ->join('credit', 'summary.id_credit', '=', 'credit.id')
         
-        $clients = db_blacklists::join('credit','credit.id','=','blacklists.id_credit')
+        $clients = db_blacklists::where('id_agent', Auth::id())
+            ->join('credit','credit.id','=','blacklists.id_credit')
             ->join('users','credit.id_user','=','users.id')
             ->select(
                 'blacklists.*',
