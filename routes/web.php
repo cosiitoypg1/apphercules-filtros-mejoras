@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('route', 'routeController')->middleware('close');
     Route::resource('statistics', 'statisticsUserController');
     Route::resource('blacklists', 'blacklistsController');
+    Route::resource('pending-pay', 'pendingPaymentController');
     Route::resource('history', 'historyController');
     Route::resource('transaction', 'transactionController');
     Route::resource('bill', 'billController')->middleware('close');

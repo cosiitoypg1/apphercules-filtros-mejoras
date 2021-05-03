@@ -6,6 +6,7 @@ use App\db_credit;
 use App\db_not_pay;
 use App\db_summary;
 use App\db_blacklists;
+use App\db_pending_pay;
 use App\db_supervisor_has_agent;
 use App\User;
 use Carbon\Carbon;
@@ -65,7 +66,8 @@ class routeController extends Controller
             if (!db_summary::where('id_credit', $d->id)->whereDate('created_at', '=', Carbon::now()->toDateString())->exists()) {
                 $findExist = !db_not_pay::whereDate('created_at', '=', Carbon::now()->toDateString())->where('id_credit', $d->id)->exists();
                 $findPending = !db_blacklists::where('id_credit', $d->id)->exists();
-                if ($findExist && $findPending) {
+                $findPending_pay = !db_pending_pay::where('id_credit', $d->id)->whereDate('created_at', '=', Carbon::now()->toDateString())->exists();
+                if ($findExist && $findPending && $findPending_pay) {
                     $data_filter[] = $d;
                 }
 
@@ -74,8 +76,36 @@ class routeController extends Controller
 
         }
 
+        $pending = db_pending_pay::where('id_agent', Auth::id())
+        ->join('credit','credit.id','=','pending_pays.id_credit')
+        ->join('users','credit.id_user','=','users.id')
+        ->select(
+            'pending_pays.*',
+            'users.name as user_name',
+            'users.last_name as user_last_name'
+        )
+        ->orderBy('id','DESC')
+        ->get();
+        $data_filter_pending = array();
+        foreach ($pending as $ka => $da) {
+            if (!db_summary::where('id_credit', $da->id_credit)->whereDate('created_at', '=', Carbon::now()->toDateString())->exists()) {
+                $findExist = db_pending_pay::whereDate('created_at', '=', Carbon::now()->toDateString())->where('id_credit', $da->id_credit)->exists();
+                if ($findExist) {
+                    $data_filter_pending[] = $da;
+                }
+
+            }
+
+
+        }
+
+//        dd($clients);
+
+
+
         $data_all = array(
-            'clients' => $data_filter
+            'clients' => $data_filter,
+            'pending' => $data_filter_pending
         );
 
         return view('route.index', $data_all);
@@ -99,7 +129,16 @@ class routeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $input = $request->all();
+
+        foreach ($input['completeArr'] as $key => $value) {
+            $key = $key + 1;
+            db_credit::where('id', $value)->update([
+                'order_list' => ($key)
+            ]);
+        }
+        return response()->json(['status' => 'success']);
     }
 
     /**
@@ -173,7 +212,15 @@ class routeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $input = $request->completeArr;
+        // $arr = [];
+        // foreach ($input as $key => $value) {
+        //     $k = $value->order;
+        //     $arr[$k] = $value;
+        // }
 
+
+        return $input;
 
     }
 

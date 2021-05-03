@@ -1,12 +1,13 @@
 @php
-    use Illuminate\Support\Facades\Crypt;
-        $cookie = \Illuminate\Support\Facades\Cookie::get('forward_session');
-        if($cookie){
-            $decrypted = Crypt::decryptString($cookie);
-            $parse_decrypted= explode('-',$decrypted);
-            $gap_time = \Carbon\Carbon::createFromTimestamp($parse_decrypted[1]);
-            $now = \Carbon\Carbon::now();
-            $valid = $gap_time->gte($now);
+use Illuminate\Support\Facades\Crypt;
+$cookie = \Illuminate\Support\Facades\Cookie::get('forward_session');
+if($cookie){
+$decrypted = Crypt::decryptString($cookie);
+$parse_decrypted= explode('-',$decrypted);
+$gap_time = \Carbon\Carbon::createFromTimestamp($parse_decrypted[1]);
+$now = \Carbon\Carbon::now();
+$valid = $gap_time->gte($now);
+
         }
 
 @endphp
@@ -15,7 +16,7 @@
     <!-- navbar header -->
     <div class="navbar-header">
 
-        <a href="{{url('logout')}}" class="navbar-toggle navbar-toggle-right collapsed p-3">
+    <a href="{{url('logout')}}" class="navbar-toggle navbar-toggle-right collapsed p-3" id="logout">
             <i class="fa fa-2x fa-sign-out"></i>
         </a>
 
@@ -43,22 +44,21 @@
             <ul class="nav navbar-toolbar navbar-toolbar-right navbar-right">
 
                 <li class="dropdown">
-                    <a href="{{url('logout')}}"><i class="fa fa-sign-out fa-2x"></i></a>
+                <a href="{{url('logout')}}"><i class="fa fa-sign-out fa-2x" id="logout"></i></a>
                 </li>
             </ul>
 
         </div><!-- navbar-container -->
 </nav>
 @if(isset($valid) && $valid)
-    <div class="section-session">
-        <div>
-            Estás haciendo uso de la cuenta administradora, recuerda que la sesión es válida por 60 min
-        </div>
-        <form action="{{url('admin/session')}}" method="POST"
-              class="pull-left px-1">
-            {{ csrf_field() }}
-            <button type="submit" class="btn btn-inverse btn-xs">Volver
-            </button>
-        </form>
+<div class="section-session">
+    <div>
+        Estás haciendo uso de la cuenta administradora, recuerda que la sesión es válida por 60 min
     </div>
+    <form action="{{url('admin/session')}}" method="POST" class="pull-left px-1" id="goBack">
+        {{ csrf_field() }}
+        <button type="submit" class="btn btn-inverse btn-xs">Volver
+        </button>
+    </form>
+</div>
 @endif

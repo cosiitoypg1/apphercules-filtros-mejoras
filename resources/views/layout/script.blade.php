@@ -35,7 +35,7 @@
         maxFilesize: 1,
         acceptedFiles: ".jpeg,.jpg,.png,.gif"
     };
-
+    const change = localStorage.getItem('change-list');
     $('table').DataTable(
         {
             "pageLength": 50,
@@ -53,7 +53,9 @@
                     "previous": "Anterior"
                 },
                 "order": [[1, "asc"]]
-            }
+            },
+            "paging": change ? false: true,
+            "searching": change ? false: true
         }
     );
 
