@@ -810,20 +810,17 @@ function limpiarNumero(obj) {
             })
     });
   // Drag and Drop
-  $("#complete-item-drop").sortable({
-    connectWith: ".connectedSortable",
-    opacity: 0.5,
-}).disableSelection();
-
+  $('#complete-item-drop').sortable({
+    handle: ".item",
+    animation: 150,
+    onSort: changeOrder,
+    ghostClass: 'ghost',
+});
 if (!localStorage.getItem('change-list')) {
-    $("#complete-item-drop").sortable({
-        connectWith: ".connectedSortable",
-        opacity: 0.5,
-        cancel: "#complete-item-drop tr"
-    }).disableSelection();
+    $('#complete-item-drop').sortable('destroy');
 }
 
-$(".connectedSortable").on("sortupdate", function () {
+function changeOrder() {
     var completeArr = [];
     $("#complete-item-drop tr").each(function () {
         completeArr.push({ id: $(this).attr('item-id') });
@@ -837,7 +834,7 @@ $(".connectedSortable").on("sortupdate", function () {
         data: { completeArr }
     }).done(function (res) {
     });
-});
+};
 
 
 const seedList = document.getElementById('seeList');

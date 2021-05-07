@@ -89,8 +89,9 @@ class routeController extends Controller
         $data_filter_pending = array();
         foreach ($pending as $ka => $da) {
             if (!db_summary::where('id_credit', $da->id_credit)->whereDate('created_at', '=', Carbon::now()->toDateString())->exists()) {
+                $findSaltar = !db_not_pay::whereDate('created_at', '=', Carbon::now()->toDateString())->where('id_credit', $da->id_credit)->exists();
                 $findExist = db_pending_pay::whereDate('created_at', '=', Carbon::now()->toDateString())->where('id_credit', $da->id_credit)->exists();
-                if ($findExist) {
+                if ($findExist && $findSaltar) {
                     $data_filter_pending[] = $da;
                 }
 

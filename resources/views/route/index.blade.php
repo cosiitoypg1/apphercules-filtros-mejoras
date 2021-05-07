@@ -85,11 +85,7 @@
                                         <a href="#openModal{{$client->id}}" class="btn btn-success btn-xs"> Pagar</a>
 
                                         @include('route.modal')
-
-                                        <a href="{{url('route')}}/" id_user="{{$client->id_user}}"
-                                            id_credit="{{$client->id}}"
-                                            class="btn btn-warning btn-xs ajax-btn btn-pagar"><i
-                                                class="fa fa-archive "></i> Saltar</a>
+                                        <a href="javascript:void(0)" id_user="{{$client->id_user}}" id_credit="{{$client->id}}" class="btn btn-warning btn-xs ajax-btn btn-pagar"><i class="fa fa-archive "></i> Saltar</a>
                                         <a href="{{url('summary')}}?id_credit={{$client->id}}"
                                             class="btn btn-info btn-xs hidden"><i class="fa fa-history"></i> Ver</a>
                                         {{-- <a href="{{url('route')}}/{{$client->order_list}}/edit?id_credit={{$client->id}}&direction=down"
@@ -109,7 +105,7 @@
                                     
                                 </tr>
                                 </thead>
-
+                                <h4 class="m-b-lg">Clientes Pendientes</h4>
                                 <tbody>
                                 
                                 @foreach($pending as $clienta)
@@ -117,7 +113,7 @@
                                         <td>{{$clienta->id_credit}}</td>
                                         <td>{{$clienta->user_name}} {{$clienta->user_last_name}}</td>
                                         <td><a href="/payment/{{$clienta->id_credit}}?rev=true" class="btn btn-success btn-xs"> Pagar</a>
-                                        @include('route.modal')</td>
+                                        <a href="javascript:void(0)" id_user="{{$clienta->id_credit}}" id_credit="{{$clienta->id_credit}}" class="btn btn-warning btn-xs ajax-btn btn-pagar"><i class="fa fa-archive "></i> Saltar</a>
                                         
                                         
                                     </tr>
