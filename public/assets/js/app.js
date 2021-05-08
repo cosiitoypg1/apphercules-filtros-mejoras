@@ -811,11 +811,12 @@ function limpiarNumero(obj) {
     });
   // Drag and Drop
   $('#complete-item-drop').sortable({
-    handle: ".item",
     animation: 150,
     onSort: changeOrder,
-    ghostClass: 'ghost',
+    chosenClass: 'select',
+    dragClass: 'drag',
 });
+
 if (!localStorage.getItem('change-list')) {
     $('#complete-item-drop').sortable('destroy');
 }
@@ -861,7 +862,6 @@ logout?.addEventListener('click', function () {
     localStorage.removeItem('change-list');
 });
 goBack?.addEventListener('submit', function () {
-    console.log('submit');
     localStorage.removeItem('change-list');
 });
 
