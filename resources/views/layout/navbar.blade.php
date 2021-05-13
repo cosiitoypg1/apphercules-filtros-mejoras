@@ -7,8 +7,7 @@ $parse_decrypted= explode('-',$decrypted);
 $gap_time = \Carbon\Carbon::createFromTimestamp($parse_decrypted[1]);
 $now = \Carbon\Carbon::now();
 $valid = $gap_time->gte($now);
-
-        }
+}
 
 @endphp
 <nav id="app-navbar" class="  navbar-inverse navbar-fixed-top primary in">
@@ -16,13 +15,13 @@ $valid = $gap_time->gte($now);
     <!-- navbar header -->
     <div class="navbar-header">
 
-    <a href="{{url('logout')}}" class="navbar-toggle navbar-toggle-right collapsed p-3" id="logout">
+        <a href="{{url('logout')}}" class="navbar-toggle navbar-toggle-right collapsed p-3" id="logout">
             <i class="fa fa-2x fa-sign-out"></i>
         </a>
 
         <a href="{{url('/')}}" class="navbar-brand text-white">
             {{Auth::user()->name}}
-        
+
 
         </a>
     </div><!-- .navbar-header -->
@@ -32,7 +31,7 @@ $valid = $gap_time->gte($now);
             <ul class="nav navbar-toolbar navbar-toolbar-left navbar-left">
                 <li class="hidden-float hidden-menubar-top">
                     <a href="javascript:void(0)" role="button" id="menubar-fold-btn"
-                       class="hamburger hamburger--arrowalt is-active js-hamburger">
+                        class="hamburger hamburger--arrowalt is-active js-hamburger">
                         <span class="hamburger-box"><span class="hamburger-inner"></span></span>
                     </a>
                 </li>
@@ -44,7 +43,7 @@ $valid = $gap_time->gte($now);
             <ul class="nav navbar-toolbar navbar-toolbar-right navbar-right">
 
                 <li class="dropdown">
-                <a href="{{url('logout')}}"><i class="fa fa-sign-out fa-2x" id="logout"></i></a>
+                    <a href="{{url('logout')}}"><i class="fa fa-sign-out fa-2x" id="logout"></i></a>
                 </li>
             </ul>
 

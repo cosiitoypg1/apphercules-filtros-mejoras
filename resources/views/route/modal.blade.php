@@ -24,7 +24,7 @@
             </div>
             <div class="form-group">
                 <label for="phone">Saldo:</label>
-                <input type="tel" name="phone" value="{{$client->rest}}" readonly class="form-control" id="phone1">
+                <input type="tel" name="phone" value="{{$client->rest}}" readonly class="form-control" id="phone">
             </div>
             <div class="form-group">
                 <label for="amount">Valor de cuota:</label>

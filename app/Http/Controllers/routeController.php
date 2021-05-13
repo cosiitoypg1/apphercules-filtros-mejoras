@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\db_credit;
 use App\db_not_pay;
-use App\db_summary;
-use App\db_blacklists;
 use App\db_pending_pay;
+use App\db_summary;
 use App\db_supervisor_has_agent;
 use App\User;
 use Carbon\Carbon;
@@ -34,7 +33,7 @@ class routeController extends Controller
     public function index()
     {
         $data = db_credit::where('credit.id_agent', Auth::id())
-            ->join('users','credit.id_user','=','users.id')
+            ->join('users', 'credit.id_user', '=', 'users.id')
             ->where('credit.status', 'inprogress')
             ->select('credit.*')
             ->orderBy('credit.order_list', 'asc')
@@ -43,71 +42,63 @@ class routeController extends Controller
         $dt = Carbon::now();
 
         foreach ($data as $k => $d) {
-
-
             $tmp_amount = db_summary::where('id_credit', $d->id)
-            ->where('id_agent', Auth::id())
-            ->sum('amount');
+                ->where('id_agent', Auth::id())
+                ->sum('amount');
             $amount_total = ($d->amount_neto) + ($d->amount_neto * $d->utility);
             $tmp_quote = round(floatval(($amount_total / $d->payment_number)), 2);
             $tmp_rest = round(floatval($amount_total - $tmp_amount), 2);
-
             $d->positive = $tmp_amount;
-            $d->payment_quote = $tmp_quote;
-            $d->rest = round(floatval($amount_total - $tmp_amount), 2);            
+            $d->payment_quote = ($tmp_rest > $tmp_quote) ? $tmp_rest : $tmp_quote;
+            $d->rest = round(floatval($amount_total - $tmp_amount), 2);
             $d->payment_done = db_summary::where('id_credit', $d->id)->count();
             $d->user = User::find($d->id_user);
             $d->amount_total = $amount_total;
             $d->days_rest = $dt->diffInDays(Carbon::parse($d->created_at));
             $d->saldo = $d->amount_total - (db_summary::where('id_credit', $d->id)->sum('amount'));
-            $d->quote = (floatval($d->amount_neto * $d->utility) + floatval($d->amount_neto)) / floatval($d->payment_number);
+            $d->quote = round((floatval($d->amount_neto * $d->utility) + floatval($d->amount_neto)) / floatval($d->payment_number),2);
             $d->setAttribute('last_pay', db_summary::where('id_credit', $d->id)->orderBy('id', 'desc')->first());
 
             if (!db_summary::where('id_credit', $d->id)->whereDate('created_at', '=', Carbon::now()->toDateString())->exists()) {
+
                 $findExist = !db_not_pay::whereDate('created_at', '=', Carbon::now()->toDateString())->where('id_credit', $d->id)->exists();
-                $findPending = !db_blacklists::where('id_credit', $d->id)->exists();
-                $findPending_pay = !db_pending_pay::where('id_credit', $d->id)->whereDate('created_at', '=', Carbon::now()->toDateString())->exists();
-                if ($findExist && $findPending && $findPending_pay) {
+                $findPending = !db_pending_pay::where('id_credit', $d->id)->whereDate('created_at', '=', Carbon::now()->toDateString())->exists();
+                if ($findExist && $findPending) {
                     $data_filter[] = $d;
                 }
-
             }
 
-
         }
+        $pending = db_pending_pay::join('credit', 'credit.id', '=', 'pending_pays.id_credit')
+            ->join('users', 'credit.id_user', '=', 'users.id')
+            ->select(
+                'pending_pays.*',
+                'users.name as user_name',
+                'users.last_name as user_last_name'
+            )
+            ->orderBy('id', 'DESC')
+            ->get();
 
-        $pending = db_pending_pay::where('id_agent', Auth::id())
-        ->join('credit','credit.id','=','pending_pays.id_credit')
-        ->join('users','credit.id_user','=','users.id')
-        ->select(
-            'pending_pays.*',
-            'users.name as user_name',
-            'users.last_name as user_last_name'
-        )
-        ->orderBy('id','DESC')
-        ->get();
-        $data_filter_pending = array();
-        foreach ($pending as $ka => $da) {
-            if (!db_summary::where('id_credit', $da->id_credit)->whereDate('created_at', '=', Carbon::now()->toDateString())->exists()) {
-                $findSaltar = !db_not_pay::whereDate('created_at', '=', Carbon::now()->toDateString())->where('id_credit', $da->id_credit)->exists();
-                $findExist = db_pending_pay::whereDate('created_at', '=', Carbon::now()->toDateString())->where('id_credit', $da->id_credit)->exists();
-                if ($findExist && $findSaltar) {
-                    $data_filter_pending[] = $da;
-                }
-
-            }
-
-
-        }
+        $pending = db_pending_pay::join('credit','credit.id','=','pending_pays.id_credit')
+            ->join('users','credit.id_user','=','users.id')
+            ->select(
+                'pending_pays.*',
+                'users.name as user_name',
+                'users.last_name as user_last_name'
+            )
+            ->orderBy('id','DESC')
+            ->get();
 
 //        dd($clients);
 
 
-
         $data_all = array(
             'clients' => $data_filter,
-            'pending' => $data_filter_pending
+            'pending' => $pending
         );
+
+
+
 
         return view('route.index', $data_all);
     }
@@ -130,7 +121,7 @@ class routeController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $input = $request->all();
 
         foreach ($input['completeArr'] as $key => $value) {
@@ -161,6 +152,8 @@ class routeController extends Controller
      */
     public function edit(Request $request, $id)
     {
+
+
         $id_credit = $request->id_credit;
         $direction = $request->direction;
 
@@ -200,9 +193,8 @@ class routeController extends Controller
         } else {
             return redirect('/route');
         }
-
-
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -222,7 +214,6 @@ class routeController extends Controller
 
 
         return $input;
-
     }
 
     /**

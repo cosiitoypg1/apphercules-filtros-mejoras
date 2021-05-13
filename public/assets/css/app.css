@@ -19,19 +19,7 @@ body {
 .widget-resume {
     background-color: transparent !important;
 }
-  .item{
-    cursor: move; 
-}
-.select {	
-box-shadow: 0px 0px 20px rgba(149, 153, 159, .16);
-background-color: black;
 
-
-}
-.drag {
-  opacity: 0;    
-  
-  }
 .hamburger {
     padding: 0 0;
     display: inline-block;
@@ -4236,9 +4224,9 @@ td.mail-right {
 
     /* Hide table headers (but not display: none;, for accessibility) */
     thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
+        /*position: absolute;*/
+        /*top: -9999px;*/
+        /*left: -9999px;*/
     }
 
     tr {
@@ -4829,28 +4817,17 @@ td.mail-right {
     /* -Caja:*/
     /* +Carteras:*/
     .supervisor-cash-table td:nth-of-type(1):before {
-        content: "Ruta";
+        content: "Cartera";
     }
 
     .supervisor-cash-table td:nth-of-type(2):before {
-        content: "Fecha";
+        content: "Detalle";
     }
 
     .supervisor-cash-table td:nth-of-type(3):before {
         content: "Saldo Base";
     }
-    /* +Carteras:*/
-   .supervisor-cash-tableB td:nth-of-type(1):before {
-    content: "Ruta";
-}
 
-.supervisor-cash-tableB td:nth-of-type(2):before {
-    content: "Fecha";
-}
-
-.supervisor-cash-tableB td:nth-of-type(3):before {
-    content: "Caja";
-}
     /* +Historial Caja:*/
     .supervisor-cashH-table td:nth-of-type(1):before {
         content: "Fecha";
@@ -4882,11 +4859,7 @@ td.mail-right {
     }
 
     .supervisor-billS-table td:nth-of-type(6):before {
-<<<<<<< Updated upstream
-        content: "Agente";
-=======
         content: "Cobrador";
->>>>>>> Stashed changes
     }
 
     /* Agente:*/
@@ -4924,11 +4897,7 @@ td.mail-right {
     }
 
     .client-table td:nth-of-type(9):before {
-<<<<<<< Updated upstream
-        content: "Tipo";
-=======
         content: "Status";
->>>>>>> Stashed changes
     }
 
     .client-table td:nth-of-type(10):before {
@@ -4957,7 +4926,7 @@ td.mail-right {
     }
        /* -Registro no  pago:*/
     .agente-not-payments-table td:nth-of-type(1):before {
-        content: "Cliente";
+        content: "Clinte";
     }
 
     .agente-not-payments-table td:nth-of-type(2):before {
@@ -5041,39 +5010,6 @@ td.mail-right {
 
     .agente-route-table td:nth-of-type(10):before {
         content: "Status";
-    }
-    /* -Iniciar Ruta-Pending:*/
-    .agente-route-table-pending td:nth-of-type(1):before {
-        content: "#Credito";
-    }
-
-    .agente-route-table-pending td:nth-of-type(2):before {
-        content: "#Nombres";
-    }
-
-    .agente-route-table-pending td:nth-of-type(3):before {
-        content: "Abono";
-    }
-
-    /* -Lista de BlackLists:*/
-    .agente-blacklists-table td:nth-of-type(1):before {
-        content: "#Credito";
-    }
-
-    .agente-blacklists-table td:nth-of-type(2):before {
-        content: "Fecha de Ingreso";
-    }
-
-    .agente-blacklists-table td:nth-of-type(3):before {
-        content: "Nombres";
-    }
-
-    .agente-blacklists-table td:nth-of-type(4):before {
-        content: "Abono";
-    }
-
-    .agente-blacklists-table td:nth-of-type(5):before {
-        content: "Abono";
     }
 
     /* -Transacciones:*/
@@ -5166,25 +5102,22 @@ td.mail-right {
     }
 
     .agente-g-table td:nth-of-type(6):before {
-<<<<<<< Updated upstream
-        content: "Agente";
-=======
         content: "Cobrador";
->>>>>>> Stashed changes
     }
 
     /*FIn Luis*/
 }
 
+
 .clients.hovering {
-    background: #b6d6fb;
-    border-color: #276cbc;
-  }
-  
-  .item {
-    cursor: pointer;  
-  }
-  
+  background: #b6d6fb;
+  border-color: #276cbc;
+}
+
+.item {
+  cursor: pointer;  
+}
+
 .add_top_60 {
     margin-top: 60px;
 }
@@ -5202,6 +5135,7 @@ td.mail-right {
 @media (max-width: 768px) {
     .ui-datepicker-calendar tr {
         display: inline-flex !important;
+        justify-content: space-between;
         width: 100%;
     }
 

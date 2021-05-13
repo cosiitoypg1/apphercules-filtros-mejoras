@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\db_agent_has_user;
+use App\db_audit;
 use App\db_credit;
 use App\db_summary;
 use App\db_supervisor_has_agent;
@@ -35,8 +36,7 @@ class userController extends Controller
     {
         $payment_number = DB::table('payment_number')->get();
         array(
-        $paymente_number = 'payment_number'
-        );
+        $paymente_number = 'payment_number');
         $user_current = Auth::user();
 
         $user_has_agent = db_agent_has_user::where('id_agent', Auth::id())
@@ -56,7 +56,7 @@ class userController extends Controller
                 $user->credit_count = db_credit::where('id_user', $user->id)->count();
                 $user->amount_net = db_credit::where('id_user', $user->id)
                     ->where('status', 'inprogress')->get()->toArray();
-                if (sizeOf($user->amount_net)) {
+                if(sizeOf($user->amount_net)) {
                     $tmp_credit = 0;
                     $user->gap_credit = 0;
                     $user->summary_net = 0;
@@ -75,7 +75,7 @@ class userController extends Controller
             }
         }
 
-        $total_pending = floatval($user_has_agent->sum('summary_net') + $user_has_agent->sum('gap_credit'));
+        $total_pending = floatval($user_has_agent->sum('summary_net') + $user_has_agent->sum('gap_credit')) ;
         $user_has_agent = array(
             'clients' => $user_has_agent,
             'total_pending' => $total_pending
@@ -177,7 +177,7 @@ class userController extends Controller
             $id = User::insertGetId($values);
         } else {
             $id = User::where('nit', $nit)->first()->id;
-            if ($_id == $id) {
+            if($_id == $id) {
                 if (db_agent_has_user::where('id_client', $id)->exists()) {
                     $agent_data = db_agent_has_user::where('id_client', $id)->first();
                     if ($agent_data->id_agent != Auth::id()) {
@@ -193,12 +193,7 @@ class userController extends Controller
             db_agent_has_user::insert([
                 'id_agent' => Auth::id(),
                 'id_client' => $id,
-                'id_wallet' => db_supervisor_has_agent::where('id_user_agent', Auth::id())->first()->id_wallet
-            ]);
-        }
-        $order_list_credit = 0;
-        if (db_credit::where('credit.id_user', $id)->where('id_agent', Auth::id())->exists()) {
-            $order_list_credit = db_credit::where('credit.id_user', $id)->where('credit.id_agent', Auth::id())->orderBy('created_at', 'desc')->first()->order_list;
+                'id_wallet' => db_supervisor_has_agent::where('id_user_agent', Auth::id())->first()->id_wallet]);
         }
 
         if (db_credit::orderBy('order_list', 'DESC')->first() === null) {
@@ -214,9 +209,19 @@ class userController extends Controller
             'amount_neto' => $amount,
             'id_user' => $id,
             'id_agent' => Auth::id(),
-            'order_list' => $order_list_credit > 0 ? $order_list_credit : ($last_order) + 1
+            'order_list' => ($last_order) + 1
         );
         db_credit::insert($values);
+
+        $audit = array(
+            'created_at' => Carbon::now(),
+            'id_user' => Auth::id(),
+            'data' => json_encode($values),
+            'event' => 'create',
+            'device' => $request->device,
+            'type' => 'Cliente'
+        );
+        db_audit::insert($audit);
         return redirect('/');
     }
 

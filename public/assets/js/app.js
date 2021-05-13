@@ -81,22 +81,51 @@
         });
     };
 
-
     window.app = app;
 }(jQuery, window);
 
 function initialize() {
+    // const options = optionsMaps || null;
 
-    const options = optionsMaps || null;
-
+    const options = {
+        componentRestrictions: { country: 'ec' }
+    };
+    let coordinates = null;
     const input = document.querySelector('.g-autoplaces-address');
     const autocomplete = new google.maps.places.Autocomplete(input, options);
+    const mapElement = document.querySelector(".over-change-display")
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            coordinates = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            }
+            if (coordinates) {
+                console.log('loading map..')
+                geocodeLatLng(coordinates);
+                mapElement.setAttribute('style', 'display:block !important');
+                initMap({ lat: coordinates.lat, lng: coordinates.lng })
+            }
+        });
+    }
+    else {
+        console.log(`Geolocation is not supported by this browser.`);
+    }
+
     autocomplete.addListener('place_changed', function () {
         const place = autocomplete.getPlace();
-        const mapElement = document.querySelector(".over-change-display")
-        if (place) {
+
+        if(place) {
+            coordinates = {
+                lat: place.geometry['location'].lat(),
+                lng: place.geometry['location'].lng()
+            }
+            // document.getElementById('address').value = results[0].formatted_address;
+        }
+        if (coordinates) {
             mapElement.setAttribute('style', 'display:block !important');
-            initMap({ lat: place.geometry['location'].lat(), lng: place.geometry['location'].lng() })
+            initMap({ lat: coordinates.lat, lng: coordinates.lng })
         }
         // $('#latitude').val(place.geometry['location'].lat());
         // $('#longitude').val(place.geometry['location'].lng());
@@ -112,6 +141,30 @@ function toggleBounce(event) {
     $('body .new-register #lat').val(event.latLng.lat());
     $('body .new-register #lng').val(event.latLng.lng());
 
+}
+
+geocodeLatLng = ({lat, lng}) => {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode(
+        { location: {lat, lng} },
+        (
+            results = google.maps.GeocoderResult,
+            status = google.maps.GeocoderStatus
+        ) => {
+            if (status === 'OK') {
+                if (results[0]) {
+                    let address = document.getElementById('address');
+                    if (!address.value.length) {
+                        address.value = results[0].formatted_address
+                    }
+                } else {
+                    // window.alert('No results found');
+                }
+            } else {
+                // window.alert('Geocoder failed due to: ' + status);
+            }
+        }
+    );
 }
 
 function initMap({ lat, lng }) {
@@ -447,11 +500,11 @@ function initMap({ lat, lng }) {
 }(jQuery, window);
 
 
-    
+
 function viewPassword() {
     var input = document.getElementById("password");
     if (input.type == "password") {
-        input.type = "number";
+        input.type = "text";
     } else {
         input.type = "password";
     }
@@ -682,7 +735,8 @@ function limpiarNumero(obj) {
         "dateFormat": "dd/mm/yy",
         "dayNames": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
         "dayNamesMin": ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
-        "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+        "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+        "weekHeader": "W"
     });
     $('body .datepicker-trigger').prop("readonly", true);
     $('body').on('change', '.supervisor-client #wallet', function () {
@@ -691,7 +745,7 @@ function limpiarNumero(obj) {
     });
 
     $('body').on('submit', '.payment-create', function () {
-        if (confirm('Esta seguro de realizar el pago?')) {
+        if (confirm('Esta seguro de realizar el pago (' + $('.payment-create #amount').val() + ')')) {
             return true;
         } else {
             return false;
@@ -759,7 +813,7 @@ function limpiarNumero(obj) {
 
     $('body .modal-pay').submit(function (event) {
 
-        console.log(event);
+
         event.preventDefault();
         var data = {
             _token: $('meta[name="csrf-token"]').attr('content'),
@@ -809,61 +863,65 @@ function limpiarNumero(obj) {
                 }
             })
     });
-  // Drag and Drop
-  $('#complete-item-drop').sortable({
-    animation: 150,
-    onSort: changeOrder,
-    chosenClass: 'select',
-    dragClass: 'drag',
-});
+    // Drag and Drop
+    $("#complete-item-drop").sortable({
+        connectWith: ".connectedSortable",
+        opacity: 0.5,
+    }).disableSelection();
 
-if (!localStorage.getItem('change-list')) {
-    $('#complete-item-drop').sortable('destroy');
-}
+    if (!localStorage.getItem('change-list')) {
+        $("#complete-item-drop").sortable({
+            connectWith: ".connectedSortable",
+            opacity: 0.5,
+            cancel: "#complete-item-drop tr"
+        }).disableSelection();
+    }
 
-function changeOrder() {
-    var completeArr = [];
-    $("#complete-item-drop tr").each(function () {
-        completeArr.push({ id: $(this).attr('item-id') });
+    $(".connectedSortable").on("sortupdate", function () {
+        var completeArr = [];
+        $("#complete-item-drop tr").each(function () {
+            completeArr.push({ id: $(this).attr('item-id') });
+        });
+        $.ajax({
+            url: '/route',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: { completeArr }
+        }).done(function (res) {
+        });
     });
-    $.ajax({
-        url: '/route',
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: { completeArr }
-    }).done(function (res) {
+
+
+    const seedList = document.getElementById('seeList');
+    const changeList = document.getElementById('changeList');
+    const pending = document.getElementById('pending');
+    const logout = document.getElementById('logout');
+    const goBack = document.getElementById('goBack');
+
+    if (localStorage.getItem('change-list')) {
+        changeList?.classList.toggle('d-none');
+        seedList?.classList.toggle('d-none');
+        pending?.classList.toggle('d-none');
+    };
+
+    changeList?.addEventListener('click', function () {
+        localStorage.setItem('change-list', Date.now())
+        location.reload();
+
     });
-};
-
-
-const seedList = document.getElementById('seeList');
-const changeList = document.getElementById('changeList');
-const logout = document.getElementById('logout');
-const goBack = document.getElementById('goBack');
-
-if (localStorage.getItem('change-list')) {
-    changeList?.classList.toggle('d-none');
-    seedList?.classList.toggle('d-none');
- 
-};
-
-changeList?.addEventListener('click', function () {
-    localStorage.setItem('change-list', Date.now())
-    location.reload();
-
-});
-seedList?.addEventListener('click', function () {
-    localStorage.removeItem('change-list');
-    location.reload();
-});
-logout?.addEventListener('click', function () {
-    localStorage.removeItem('change-list');
-});
-goBack?.addEventListener('submit', function () {
-    localStorage.removeItem('change-list');
-});
+    seedList?.addEventListener('click', function () {
+        localStorage.removeItem('change-list');
+        location.reload();
+    });
+    logout?.addEventListener('click', function () {
+        localStorage.removeItem('change-list');
+    });
+    goBack?.addEventListener('submit', function () {
+        console.log('submit');
+        localStorage.removeItem('change-list');
+    });
 
 
 }(jQuery, window);

@@ -20,7 +20,7 @@ Route::get('/cron', 'closeController@close_automatic');
 
 Auth::routes();
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'device'])->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::resource('client', 'userController', ['only' => ['create', 'show']])->middleware('close');
     Route::resource('client', 'userController', ['except' => ['create', 'show']]);
@@ -29,10 +29,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('cartera', 'carteraController')->middleware('close');
     Route::resource('summary', 'summaryController')->middleware('close');
     Route::resource('simulator', 'simulatorController');
+    Route::resource('pending-pay', 'pendingPaymentController');
     Route::resource('route', 'routeController')->middleware('close');
     Route::resource('statistics', 'statisticsUserController');
-    Route::resource('blacklists', 'blacklistsController');
-    Route::resource('pending-pay', 'pendingPaymentController');
     Route::resource('history', 'historyController');
     Route::resource('transaction', 'transactionController');
     Route::resource('bill', 'billController')->middleware('close');
@@ -42,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-Route::prefix('supervisor')->group(function () {
+Route::prefix('supervisor')->middleware(['device'])->group(function () {
     Route::resource('agent', 'agentController');
     Route::resource('close', 'closeController');
     Route::resource('client', 'clientController');
@@ -67,17 +66,19 @@ Route::prefix('supervisor')->group(function () {
     });
 });
 
-Route::prefix('admin')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'device'])->group(function () {
     Route::resource('session', 'sessionController')->only([
         'store'
     ]);
 });
 
 
-Route::prefix('admin')->middleware(['admin'])->group(function () {
+Route::prefix('admin')->middleware(['admin', 'device'])->group(function () {
     Route::resource('user', 'adminUserController');
     Route::resource('session', 'sessionController')->only([
         'update'
     ]);
     Route::resource('route', 'adminRouteController');
+    Route::resource('graph', 'graphController');
+    Route::resource('audit', 'auditController', ['only' => ['index']]);
 });

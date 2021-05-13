@@ -15,7 +15,7 @@
                     @endif
                     <div class="widget">
                         <header class="widget-header">
-                            <h4 class="widget-title">Reporte Semanal</h4>
+                            <h4 class="widget-title">Clientes que no pagaron por días</h4>
                         </header><!-- .widget-header -->
                         <hr class="widget-separator">
                         <div class="widget-body">

@@ -6,8 +6,6 @@
 <script src="{{asset('/libs/bower/jquery-slimscroll/jquery.slimscroll.js')}}"></script>
 <script src="{{asset('/libs/bower/perfect-scrollbar/js/perfect-scrollbar.jquery.js')}}"></script>
 <script src="{{asset('/libs/bower/PACE/pace.min.js')}}"></script>
-<script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
 <!-- endbuild -->
 
 <script type="text/javascript">
@@ -28,6 +26,8 @@
 <script src="{{asset('/assets/js/fullcalendar.js')}}"></script>
 <script src="{{asset('/assets/js/dropzone.js')}}"></script>
 <script src="{{asset('/assets/js/datatable.js')}}"></script>
+<script src="{{asset('/assets/js/chart.min.js')}}"></script>
+<script src="{{asset('/assets/js/graph.js')}}"></script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key={{ env("GOOGLE_KEY") }}&libraries=places"></script>
 
@@ -38,6 +38,7 @@
         acceptedFiles: ".jpeg,.jpg,.png,.gif"
     };
     const change = localStorage.getItem('change-list');
+
     $('table').DataTable(
         {
             "pageLength": 50,
@@ -60,8 +61,7 @@
             "searching": change ? false: true
         }
     );
-
-    /**
+        /**
      * Script GOOGLE Autoplaces
      */
 

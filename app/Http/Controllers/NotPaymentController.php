@@ -67,7 +67,7 @@ class NotPaymentController extends Controller
         Cookie::queue('date_end', $request->date_end);
 
         $data_credit  = db_credit::where('credit.id_agent', Auth::id())
-
+            ->where('credit.status', 'inprogress')
             ->join('users', 'users.id', '=', 'credit.id_user')
             ->orderBy('credit.created_at', 'asc')
             ->select(
@@ -102,7 +102,7 @@ class NotPaymentController extends Controller
     {
         $date_start =  Cookie::get('date_start');
         $date_end =  Cookie::get('date_end');
-        return Excel::download(new NotPayExport($date_start, $date_end, Auth::id()), 'reporte_semanal.xlsx');
+        return Excel::download(new NotPayExport($date_start, $date_end, Auth::id()), 'not_payments.xlsx');
     }
 
     /**

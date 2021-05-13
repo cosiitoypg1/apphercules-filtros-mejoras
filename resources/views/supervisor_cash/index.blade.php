@@ -86,7 +86,7 @@
 
                             <!-- FOR MOBILE -->
                             <div class=" d-lg-none d-xl-none d-md-none">
-                                <table class="table supervisor-cash-tableB">
+                                <table class="table client-table">
                                     <tbody>
                                             <!-- <tr>
                                                 <th>Fecha</th>
@@ -95,7 +95,6 @@
                                     
                                     @foreach($report as $r)
                                         <tr>
-                                            <td>{{$r->wallet_name}}</td>
                                             <td>{{$r->created_at}}</td>
                                             <td>{{$r->total}}</td>
                                         </tr>
